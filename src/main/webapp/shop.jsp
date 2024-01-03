@@ -9,7 +9,13 @@
 <%
 ProductDAO productDAO = new ProductDAO();
 
-pageContext.setAttribute("allProduct", productDAO.getAllProducts());
+String searchInput = request.getParameter("searchInput");
+
+if(searchInput != null){
+	pageContext.setAttribute("allProduct", productDAO.getAllProductBySearchInput(searchInput));
+}else{
+	pageContext.setAttribute("allProduct", productDAO.getAllProducts());
+}
 
 %>
 

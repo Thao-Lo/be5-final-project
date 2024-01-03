@@ -3,13 +3,22 @@
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="dao.ProductDAO"%>
+<%@ page import="dao.CategoryDAO"%>
 <%@ page import="entity.Product"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%
+String categoryId = String.valueOf(request.getParameter("categoryId"));
 ProductDAO productDAO = new ProductDAO();
 
-pageContext.setAttribute("latestProducts", productDAO.getLatestProducts());
+CategoryDAO categoryDAO = new CategoryDAO();
+pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
+
+if(categoryId != null && categoryId.matches("^\\d+$")){
+	pageContext.setAttribute("latestProducts", productDAO.getAllProductByCategory(Integer.parseInt(categoryId)));
+}else{
+	pageContext.setAttribute("latestProducts", productDAO.getLatestProducts());
+}
 	
 %>
 
@@ -67,19 +76,13 @@ pageContext.setAttribute("latestProducts", productDAO.getLatestProducts());
                 Shop
               </a>
             </li>
+            <c:forEach items="${allCategory}" var="category">      
             <li class="nav-item">
-              <a class="nav-link" href="why.jsp">
-                Why Us
+              <a class="nav-link" href="index.jsp?categoryId=${category.id}">
+                ${category.name}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="testimonial.jsp">
-                Testimonial
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.jsp">Contact Us</a>
-            </li>
+              </c:forEach>
           </ul>
           <div class="user_option">
             <a href="">
@@ -91,10 +94,12 @@ pageContext.setAttribute("latestProducts", productDAO.getLatestProducts());
             <a href="">
               <i class="fa fa-shopping-bag" aria-hidden="true"></i>
             </a>
-            <form class="form-inline ">
-              <button class="btn nav_search-btn" type="submit">
+            
+             <form action="shop.jsp" class = "search-form">
+                <input type="text" placeholder="search Giftos" name="searchInput">                              
+	            <button class="btn nav_search-btn" type="submit">
                 <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
+              	</button>
             </form>
           </div>
         </div>
@@ -112,10 +117,18 @@ pageContext.setAttribute("latestProducts", productDAO.getLatestProducts());
 
   <section class="shop_section layout_padding">
     <div class="container">
-      <div class="heading_container heading_center">
+      <div class="heading_container heading_center">  
+      
+       <div class="info_form ">             
+             
+            </div>
+            
+            
         <h2>
           Latest Products
         </h2>
+        
+        
       </div>
       <div class="row">
       <c:forEach items="${latestProducts}" var="product">	

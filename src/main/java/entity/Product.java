@@ -9,6 +9,7 @@ public class Product {
 		private boolean is_new;
 		private int quantity;
 		private String description;
+		private int categoryId;
 
 
 public Product(int id, String name, int price, String imgName, boolean is_new, int quantity, String description) {

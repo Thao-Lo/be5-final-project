@@ -174,9 +174,7 @@
               </h5>
               <form action="#">
                 <input type="email" placeholder="Enter your email">
-                <button>
-                  Subscribe
-                </button>
+             	 <input type="submit" value="Submit">
               </form>
             </div>
           </div>
