@@ -11,6 +11,7 @@
 ProductDAO productDAO = new ProductDAO();
 String categoryId = String.valueOf(request.getParameter("categoryId"));
 
+
 CategoryDAO categoryDAO = new CategoryDAO();
 pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
 
@@ -119,16 +120,10 @@ if(categoryId != null && categoryId.matches("^\\d+$")){
     <div class="container">
       <div class="heading_container heading_center">  
       
-       <div class="info_form ">             
+       <div class="info_form "></div>            
              
-            </div>
-            
-            
-        <h2>
-          Latest Products
-        </h2>
-        
-        
+       <h2> Latest Product </h2>
+       
       </div>
       <div class="row">
       <c:forEach items="${latestProducts}" var="product">	

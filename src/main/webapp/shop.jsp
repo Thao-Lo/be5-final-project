@@ -14,6 +14,7 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
 ProductDAO productDAO = new ProductDAO();
 
 String searchInput = request.getParameter("searchInput");
+pageContext.setAttribute("searchInput", searchInput);
 
 if(searchInput != null){
 	pageContext.setAttribute("allProduct", productDAO.getAllProductBySearchInput(searchInput));
@@ -117,7 +118,15 @@ if(searchInput != null){
     <div class="container">
       <div class="heading_container heading_center">
         <h2>
-          All Products
+        <c:choose>
+        <c:when test="${searchInput != null}">
+         Search results for: ${searchInput}
+         </c:when>
+         <c:otherwise>
+         All Products
+         </c:otherwise>
+        </c:choose>
+        
         </h2>
       </div>
       <div class="row">
