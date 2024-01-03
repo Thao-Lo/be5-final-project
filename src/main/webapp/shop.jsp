@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@page import="dao.CategoryDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList"%>
@@ -7,6 +8,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%
+CategoryDAO categoryDAO = new CategoryDAO();
+pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
+
 ProductDAO productDAO = new ProductDAO();
 
 String searchInput = request.getParameter("searchInput");
@@ -52,7 +56,7 @@ if(searchInput != null){
 <body>
   <div class="hero_area">
     <!-- header section strats -->
-    <header class="header_section">
+      <header class="header_section">
       <nav class="navbar navbar-expand-lg custom_nav-container ">
         <a class="navbar-brand" href="index.html">
           <span>
@@ -63,9 +67,9 @@ if(searchInput != null){
           <span class=""></span>
         </button>
 
-        <div class="collapse navbar-collapse innerpage_navbar" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav  ">
-            <li class="nav-item ">
+             <li class="nav-item ">
               <a class="nav-link" href="index.jsp">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
@@ -73,19 +77,13 @@ if(searchInput != null){
                 Shop
               </a>
             </li>
+            <c:forEach items="${allCategory}" var="category">      
             <li class="nav-item">
-              <a class="nav-link" href="why.jsp">
-                Why Us
+              <a class="nav-link" href="index.jsp?categoryId=${category.id}">
+                ${category.name}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="testimonial.jsp">
-                Testimonial
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.jsp">Contact Us</a>
-            </li>
+              </c:forEach>
           </ul>
           <div class="user_option">
             <a href="">
@@ -97,10 +95,12 @@ if(searchInput != null){
             <a href="">
               <i class="fa fa-shopping-bag" aria-hidden="true"></i>
             </a>
-            <form class="form-inline ">
-              <button class="btn nav_search-btn" type="submit">
+            
+             <form action="shop.jsp" class = "search-form">
+                <input type="text" placeholder="search Giftos" name="searchInput">                              
+	            <button class="btn nav_search-btn" type="submit">
                 <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
+              	</button>
             </form>
           </div>
         </div>

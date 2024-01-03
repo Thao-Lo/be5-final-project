@@ -8,8 +8,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%
-String categoryId = String.valueOf(request.getParameter("categoryId"));
 ProductDAO productDAO = new ProductDAO();
+String categoryId = String.valueOf(request.getParameter("categoryId"));
 
 CategoryDAO categoryDAO = new CategoryDAO();
 pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
