@@ -94,13 +94,13 @@ public class ProductDAO {
 		return null;
 
 	}
-	public List<Product> getAllProductByCategory(int categoryId) throws SQLException{
+	public List<Product> getAllProductByCategory(String categoryId) throws SQLException{
 		
 		Connection connection = DBConnection.makeConnection();
 
 		String sql = "SELECT * FROM product p JOIN category c ON p.categoryId = c.id WHERE c.id = ?";
 		PreparedStatement preStmt = connection.prepareStatement(sql);
-		preStmt.setInt(1, categoryId);
+		preStmt.setString(1, categoryId);
 
 		ResultSet resultSet = preStmt.executeQuery();
 		ArrayList<Product> list = new ArrayList<Product>();

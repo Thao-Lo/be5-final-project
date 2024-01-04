@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<%@page import="dao.UserDAO"%>
+<%@page import="entity.User"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList"%>
@@ -9,18 +12,39 @@
 
 <%
 ProductDAO productDAO = new ProductDAO();
-String categoryId = String.valueOf(request.getParameter("categoryId"));
-
-
 CategoryDAO categoryDAO = new CategoryDAO();
-pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
+UserDAO userDAO = new UserDAO();
 
-if(categoryId != null && categoryId.matches("^\\d+$")){
-	pageContext.setAttribute("latestProducts", productDAO.getAllProductByCategory(Integer.parseInt(categoryId)));
-}else{
-	pageContext.setAttribute("latestProducts", productDAO.getLatestProducts());
-}
+List <Product> products;
+User user;
+
+String categoryId = request.getParameter("categoryId");
+String searchInput = request.getParameter("searchInput");
+String action = request.getParameter("action");
+
+user = (User) session.getAttribute("user");
+
+if(user != null){	
+	 pageContext.setAttribute("user", user);
 	
+}
+if("SHOW_ALL".equals(action)){
+	products =  productDAO.getAllProducts();
+	pageContext.setAttribute("action", action);
+}
+else if(categoryId != null){
+	products = productDAO.getAllProductByCategory(categoryId);
+	
+}else if (searchInput != null){
+	products = productDAO.getAllProductBySearchInput(searchInput);
+	pageContext.setAttribute("searchInput", searchInput);
+}
+else{
+	products = productDAO.getLatestProducts();
+}
+
+pageContext.setAttribute("latestProducts", products);
+pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
 %>
 
 <html>
@@ -72,11 +96,7 @@ if(categoryId != null && categoryId.matches("^\\d+$")){
              <li class="nav-item ">
               <a class="nav-link" href="index.jsp">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item active">
-              <a class="nav-link" href="shop.jsp">
-                Shop
-              </a>
-            </li>
+           
             <c:forEach items="${allCategory}" var="category">      
             <li class="nav-item">
               <a class="nav-link" href="index.jsp?categoryId=${category.id}">
@@ -86,22 +106,44 @@ if(categoryId != null && categoryId.matches("^\\d+$")){
               </c:forEach>
           </ul>
           <div class="user_option">
-            <a href="">
-              <i class="fa fa-user" aria-hidden="true"></i>
-              <span>
-                Login
-              </span>
-            </a>
-            <a href="">
-              <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-            </a>
+          <c:choose>
             
-             <form action="shop.jsp" class = "search-form">
-                <input type="text" placeholder="search Giftos" name="searchInput">                              
+              <c:when test="${user != null}">
+              	<a href="">
+              		<i class="fa fa-user" aria-hidden="true"></i>
+              		<span>${user.username}</span>
+              	</a>
+              </c:when>
+              
+              <c:otherwise>
+              	<a href="login.jsp">
+            		 <i class="fa fa-user" aria-hidden="true"></i>
+              		<span>
+		                Login
+		             </span>
+		        </a>
+		        
+		         <a href="register.jsp">
+             		 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+           		 </a>
+              </c:otherwise>
+		          
+            
+             </c:choose>
+          
+          
+             <form action="index.jsp" class = "search-form">
+                <input type="text" placeholder="search Giftos" name="searchInput" required> 
+ 			                          
 	            <button class="btn nav_search-btn" type="submit">
                 <i class="fa fa-search" aria-hidden="true"></i>
-              	</button>
+                </button>
+                 <c:if test="searchInput == null">  
+                <span>enter a value</span>
+              	
+               </c:if>
             </form>
+           
           </div>
         </div>
       </nav>
@@ -122,7 +164,23 @@ if(categoryId != null && categoryId.matches("^\\d+$")){
       
        <div class="info_form "></div>            
              
-       <h2> Latest Product </h2>
+       <h2>   
+		  <c:choose>
+		  
+		    <c:when test="${searchInput != null}">
+		         Search results for: ${searchInput}
+		    </c:when>
+		    
+		     <c:when test="${action != null}">
+		         All Products
+		    </c:when>	
+		    	   
+		    <c:otherwise>
+		         Products
+		    </c:otherwise>
+		    
+		  </c:choose>
+        </h2>
        
       </div>
       <div class="row">
@@ -144,11 +202,13 @@ if(categoryId != null && categoryId.matches("^\\d+$")){
                   </span>
                 </h6>
               </div>
-              <div class="new">
+              <c:if test="${product.is_new == true}" >
+              <div class="new">              
                 <span>
                   New
-                </span>
+                </span>                
               </div>
+              </c:if>
             </a>
           </div>
         </div>
@@ -157,7 +217,7 @@ if(categoryId != null && categoryId.matches("^\\d+$")){
             
       </div>
       <div class="btn-box">
-        <a href="shop.jsp">
+        <a href="index.jsp?action=SHOW_ALL">
           View All Products
         </a>
       </div>

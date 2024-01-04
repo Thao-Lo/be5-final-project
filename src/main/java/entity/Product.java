@@ -61,7 +61,7 @@ public void setId(int id) {
 	this.id = id;
 }
 
-public boolean isIs_new() {
+public boolean getIs_new() {
 	return is_new;
 }
 
