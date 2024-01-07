@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<%@page import="java.util.Base64"%>
+<%@page import="dao.UserDAO"%>
 <%@page import="dao.CategoryDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -10,6 +12,32 @@
 <%
 CategoryDAO categoryDAO = new CategoryDAO();
 pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
+
+String username = null;
+
+UserDAO userDAO = new UserDAO();
+
+username = request.getParameter("username");
+String email = request.getParameter("email");
+String password = request.getParameter("password");
+
+boolean showOtherInputs = false;
+
+
+boolean isUsernameRegistered = userDAO.isUsernameRegistered(username);
+if(!isUsernameRegistered & username != null){
+	session.setAttribute("username", username);
+	showOtherInputs = true;
+}
+
+username = (String) session.getAttribute("username");
+if(!isUsernameRegistered && username != null && email != null && password != null){
+	String encodedPassword = Base64.getEncoder().encodeToString(password.getBytes());	
+	userDAO.registerNewUser(username, email, encodedPassword);	
+}
+
+pageContext.setAttribute("isUsernameRegistered", isUsernameRegistered);
+pageContext.setAttribute("showOtherInputs", showOtherInputs);
 
 %>
 <html>
@@ -31,6 +59,8 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
   </title>
 
   <!-- slider stylesheet -->
+    <link href="css/general.css" type="text/css" rel="stylesheet" />
+  
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
 
   <!-- bootstrap core css -->
@@ -40,6 +70,8 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
   <link href="css/style.css" rel="stylesheet" />
   <!-- responsive style -->
   <link href="css/responsive.css" rel="stylesheet" />
+  
+
 </head>
 
 <body>
@@ -108,35 +140,60 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
     </div>
     <div class="container container-bg">
       <div class="row">
-         <div class="col-md-6 col-lg-3 px-0">
-         </div>
+         <div class="col-md-6 col-lg-3 px-0"></div>
+       
+         
         <div class="col-md-6 col-lg-6 px-0">
-          <form action="#">
-            <div>
-            <label>Username </label>
-              <input type="text" placeholder="Username" name="username" autofocus required/>
-              
-            </div>
+        
+        	<c:if test="${!showOtherInputs}">
+          <form action="register.jsp" method="post" id="usernameForm">
+	         <div>
+	            <label>Username </label>
+	            <input type="text" placeholder="Username" name="username" minlength="6" autofocus required/>
+	            <button>Next</button>
+		             <c:if test="${param.username != null && isUsernameRegistered}">
+		             	<span style="color: red">This username is unavailable</span>             
+		             </c:if>
+	           </div>
+           </form>  
+			 </c:if>
+			 
+			<c:if test="${showOtherInputs}">			
+	        <form  action="" method="post" id="otherInputsForm">         
+            <span><strong>Your Username:</strong> ${username}</span>
+            <a href="register.jsp">change</a>
             <div>
             <label>Email </label>
-              <input type="email" placeholder="sample@email.com" name="email" required/>
+              <input class="register-input" type="email" placeholder="sample@email.com" name="email" required/>
             </div>
              <div>
-            <label>Password </label>
-              <input type="password" placeholder="At least 6 characters" name="password" min="6" required/>
+            <label>Password </label>             
+	          <input class="register-input" type="password" placeholder="At least 6 characters" name="password" minlength="6" id="input1" required/>
+	          <div class="input-with-checkbox">
+	         	  <input class = "show-password" type="checkbox" onclick="togglePasswordVisibility('input1')">
+	              <label class = "label-show-password">Show Password</label>
+	              
+              </div>
             </div>
              <div>
             <label>Re - enter Password </label>
-              <input type="password" placeholder="" name="password" min="6" required/>
+              <input class="register-input" type="password" placeholder="" name="password" minlength="6" id="input2" required/>
+              <div class="input-with-checkbox">
+              <input class = "show-password" type="checkbox" onclick="togglePasswordVisibility('input2')">
+              <label class = "label-show-password">Show Password</label>
+              </div>
             </div>
-          	<div>Passwords must match!!!</div>
+          	<br><p id="message"></p>
             <div class="d-flex ">
-              <button>
-                SEND
-              </button>
-            </div>
-          </form>
-          	<div>Already have an account? <a href="login.jsp">Sign In </a></div>
+	             <a href="login.jsp">
+		              <button>SEND</button>
+	             </a>
+            </div>         	
+          	<div class="question-sign-in" >Already have an account? <a href="login.jsp">Sign In </a></div>	         
+            </form>
+            
+            </c:if>
+          
         </div>
         <div class="col-md-6 col-lg-3 px-0">
          </div>
@@ -232,12 +289,48 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
 
   <!-- end info section -->
 
+   <script>
+        // Get references to the input elements and the message element
+        const input1 = document.getElementById('input1');
+        const input2 = document.getElementById('input2');
+        const message = document.getElementById('message');
 
+        // Add an event listener to input2 to check the values
+        input2.addEventListener('input', function() {
+            if (input1.value === input2.value) {
+                message.textContent = 'Passwords match!';
+                message.style.color = 'green';
+            } else {
+                message.textContent = 'Passwords do not match!';
+                message.style.color = 'red';
+            }
+        });
+    </script>
+<script>
+function togglePasswordVisibility(inputId) {
+  var x = document.getElementById(inputId);
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
+// Call the function with the appropriate input IDs
+document.getElementById("showPassword1").addEventListener("click", function() {
+  togglePasswordVisibility("input1");
+});
+
+document.getElementById("showPassword2").addEventListener("click", function() {
+  togglePasswordVisibility("input2");
+});
+</script>
   <script src="js/jquery-3.4.1.min.js"></script>
   <script src="js/bootstrap.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
   </script>
   <script src="js/custom.js"></script>
+
 
 </body>
 

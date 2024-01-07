@@ -1,0 +1,29 @@
+
+.show-password[type="checkbox"] {
+	flex: 0;
+    background-color: #EFEFEF;
+    border: 1px solid #333;
+    height: 20px;
+    margin: 0px 5px 0px 0px;
+
+}
+
+.input-with-checkbox{
+	display: flex;   
+
+  	
+};
+
+.label-show-password{
+	flex: 1
+  
+};
+
+.register-input{
+	margin-bottom: 10px;
+	
+};
+
+.question-sign-in{
+	margin: 20px 20ppx 0px 0px;
+}

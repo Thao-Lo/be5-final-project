@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<%@page import="dao.CategoryDAO"%>
+<%@page import="entity.User"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList"%>
@@ -10,10 +12,18 @@
 String productId = String.valueOf(request.getParameter("productId"));
 
 ProductDAO productDAO = new ProductDAO();
+CategoryDAO categoryDAO = new CategoryDAO();
 
 Product product = productDAO.getProductById(Integer.parseInt(productId));
 
+User user = (User) session.getAttribute("user");
+
+if(user != null){	
+	 pageContext.setAttribute("user", user);	
+}
+
 pageContext.setAttribute("product", product);
+pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
 %>
 
 <html>
@@ -65,40 +75,52 @@ pageContext.setAttribute("product", product);
              <li class="nav-item ">
               <a class="nav-link" href="index.jsp">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item active">
-              <a class="nav-link" href="shop.jsp">
-                Shop
+              <c:forEach items="${allCategory}" var="category">      
+            <li class="nav-item">
+              <a class="nav-link" href="index.jsp?categoryId=${category.id}">
+                ${category.name}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="why.jsp">
-                Why Us
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="testimonial.jsp">
-                Testimonial
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.jsp">Contact Us</a>
-            </li>
+              </c:forEach>
           </ul>
           <div class="user_option">
-            <a href="">
-              <i class="fa fa-user" aria-hidden="true"></i>
-              <span>
-                Login
-              </span>
-            </a>
-            <a href="">
-              <i class="fa fa-shopping-bag" aria-hidden="true"></i>
-            </a>
-            <form class="form-inline ">
-              <button class="btn nav_search-btn" type="submit">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </form>
+             <c:choose>
+            
+              <c:when test="${user != null}">
+              	<a href="">
+              		<i class="fa fa-user" aria-hidden="true"></i>
+              		<span>${user.username}</span>
+              	</a>
+              	<a href="logout.jsp">
+            		 <i class="fa fa-user" aria-hidden="true"></i>
+              		<span>
+		                Logout
+		             </span>
+		        </a>
+              </c:when>
+              
+              <c:otherwise>
+              	<a href="login.jsp">
+            		 <i class="fa fa-user" aria-hidden="true"></i>
+              		<span>
+		                Login
+		             </span>
+		        </a>
+		        
+		         <a href="register.jsp">
+             		 <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+           		 </a>
+              </c:otherwise>		          
+             </c:choose>
+             
+            
+		<form action="index.jsp" class="search-form">
+			<input type="text" placeholder="search Giftos" name="searchInput"
+								required>
+			<button class="btn nav_search-btn" type="submit">
+								<i class="fa fa-search" aria-hidden="true"></i>
+			</button>
+		</form>
           </div>
         </div>
       </nav>

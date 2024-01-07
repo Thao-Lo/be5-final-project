@@ -12,22 +12,11 @@
 <%
 CategoryDAO categoryDAO = new CategoryDAO();
 UserDAO userDAO = new UserDAO();
-User user = null;
-
-String username = request.getParameter("username");
-String password = request.getParameter("password");
-
-boolean isLogin = userDAO.doLogin(username, password);	
-
 pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
-pageContext.setAttribute("isLogin", isLogin);
+
+session.invalidate();
 
 
-if (isLogin) {
-    user = userDAO.findUser(username);    
-    session.setAttribute("user", user);
-   
-}
 
 %>
 <html>
@@ -119,44 +108,18 @@ if (isLogin) {
 	<section class="contact_section layout_padding">
 		<div class="container px-0">
 			<div class="heading_container ">
-				<h2 class="">Login</h2>
+				<h2 class="">Logout</h2>
 			</div>
 		</div>
 		<div class="container container-bg">
 			<div class="row">
 				<div class="col-md-6 col-lg-3 px-0"></div>
 				<div class="col-md-6 col-lg-6 px-0">
-					<form action="#" method="post">
-						<div>
-							<label>Username</label> <input type="text" placeholder="username"
-								name="username" autofocus required />
-						</div>
-						<div>
-							<label>Password</label> <input type="password"
-								placeholder="Password" name="password" required />
-						</div>
-						
-						<div class="d-flex ">
-							<button>SEND</button>
-						</div>
-					</form>
-					
-					
-					<c:if test="${param.username != null && !isLogin}">
-						<div style="color: red">Incorrect Username or Password</div>
-					</c:if>
-					
-					<c:choose>
-					    <c:when test="${isLogin}">		
-					        <c:redirect url="index.jsp" />
-					    </c:when>					   
-					</c:choose>
-					
-					<div class="container">
-						New to Giftos? <a href="register.jsp">Create your Giftos
-							account </a>
-					</div>
+				<span> You're successfully logout</span>
+				<a href="index.jsp">Go Back To Home Page</a>
 				</div>
+					
+				
 				<div class="col-md-6 col-lg-3 px-0"></div>
 			</div>
 		</div>

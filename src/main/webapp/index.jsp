@@ -113,6 +113,12 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
               		<i class="fa fa-user" aria-hidden="true"></i>
               		<span>${user.username}</span>
               	</a>
+              	<a href="logout.jsp">
+            		 <i class="fa fa-user" aria-hidden="true"></i>
+              		<span>
+		                Logout
+		             </span>
+		        </a>
               </c:when>
               
               <c:otherwise>
@@ -138,10 +144,11 @@ pageContext.setAttribute("allCategory", categoryDAO.getAllCategories());
 	            <button class="btn nav_search-btn" type="submit">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 </button>
+                
                  <c:if test="searchInput == null">  
                 <span>enter a value</span>
               	
-               </c:if>
+              	 </c:if>
             </form>
            
           </div>
